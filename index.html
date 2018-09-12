@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        
+        <!-- Vendor Scripts -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.js"></script>
+        <script
+        src="https://code.jquery.com/jquery-3.3.1.min.js"
+        integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+        crossorigin="anonymous"></script>
+
+        <!-- Styles -->
+        <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+
+        <link rel="stylesheet" href="https://unpkg.com/vue-material@beta/dist/vue-material.min.css">
+        <link rel="stylesheet" href="https://unpkg.com/vue-material@beta/dist/theme/default.css">
+        <!--<link rel="stylesheet" href="https://unpkg.com/vue-material@beta/dist/theme/default-dark.css">-->
+        <link rel="stylesheet" href="fonts/stateface/style.css">
+        
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>DSA Electoral Endorsements 2018 - Democratic Socialists of America</title>
+    </head>
+    <body> 
+        <div id="app" >
+            <div class="header">
+                <img alt="DSA Electoral Endorsements 2018" src="img/dsa-national-logo.png" class="dsa-logo"/>
+                <h1>Endorsements</h1>
+                <h2>DSA General Election Candidate Endorsements 2018</h2>
+                <h3>Last Updated {{ lastUpdated }}</h3>
+            </div>
+            <md-table v-model="spreadsheetData" md-card class="candidate-table" v-cloak>
+                <md-table-row slot="md-table-row" slot-scope="{ item }" class="md-primary">
+                    <md-table-cell md-label="Candidate" md-sort-by="gsx$candidatename.$t">{{ item.gsx$candidatename.$t }}</md-table-cell>
+                    <md-table-cell md-label="Office">{{ item.gsx$office.$t }} <md-chip :class="['officeType', item.gsx$electiontype.$t]">{{ item.gsx$electiontype.$t }}</md-chip></md-table-cell>
+                    <md-table-cell md-label="State"><span :class="['stateface', 'stateface-'+ item.gsx$state.$t.toLowerCase() ]">{{ item.gsx$state.$t }}</span></md-table-cell>
+                    <md-table-cell md-label="Endorsed By..."><div class="endorsement">{{ item.gsx$endorsingbody.$t }}</div>
+                        <a :href="item.gsx$endorsementlink.$t" rel="new" v-if="(item.gsx$endorsementlink.$t !== '')" class="link-icon"><i class="material-icons">link</i></a>
+                    </md-table-cell>
+                </md-table-row>
+            </md-table>
+
+           
+            <md-card class="md-primary footer">
+                    <a href="http://dsaneworleans.org" alt="A Project of New Orleans DSA">
+                        <md-card-header>
+                        <md-card-header-text>
+                            <div class="md-title">A Project of New Orleans DSA</div>
+                            <div class="md-subhead">Not to be construed as an endorsement of electoralism as a strategy or practice.</div>
+                        </md-card-header-text>
+                
+                        <md-card-media md-medium>
+                            <img src="img/DSA_new_orleans_circle_logo_darkbg.png" alt="DSA New Orleans">
+                        </md-card-media>
+                        </md-card-header>
+                    </a>
+            </md-card>
+            
+        </div>
+    </body>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.5.17/dist/vue.js"></script>
+    <script src="https://unpkg.com/vue-material@1.0.0-beta-8/dist/vue-material.min.js"></script>
+    <script>
+    var spreadsheetData = [];
+    Vue.use(VueMaterial.default);
+    var app = new Vue({
+    el: '#app',
+    data: {
+        spreadsheetData: [
+        ],
+        lastUpdated: ""
+    },
+    computed: {
+        
+    },
+    watch: {
+
+    },
+    methods: {
+        getData : function(){
+            var local;
+            $.getJSON("https://spreadsheets.google.com/feeds/list/1AH0kyilHmrLxo3P1bC_8NmEBjZYJpXizLs9Nqmn4ww0/od6/public/values?alt=json", function() {
+                console.log("Fetching data...");
+            }).done(function( data ) {
+                console.log("Data fetched!");
+                local = data.feed.entry;
+                console.log(data);
+                this.lastUpdated = moment(data.feed.updated.$t).fromNow();
+                this.spreadsheetData = local;
+            }.bind(this));        
+        }
+
+    },
+    mounted : function () {
+        this.getData();
+    }
+    });
+    </script>
+    <style>
+        @font-face {
+            font-family: Klima Bold;
+            src:
+            url(fonts/klima/web/klima-bold-web.woff2) format("woff2") 
+            url(fonts/klima/web/klima-bold-web.woff) format("woff");
+        }
+        @font-face {
+            font-family: Klima Heavy;
+            src:
+            url(fonts/klima/web/klima-heavy-web.woff2) format("woff2") 
+            url(fonts/klima/web/klima-heavy-web.woff) format("woff");
+        }
+        @font-face {
+            font-family: Klima Regular;
+            src:
+                url(fonts/klima/web/klima-regular-web.woff2) format("woff2") 
+                url(fonts/klima/web/klima-regular-web.woff) format("woff");
+        }
+
+         @font-face {
+            font-family: 'StateFaceRegular';
+            src: url('fonts/stateface/webfont/stateface-regular-webfont.eot');
+            src: url('fonts/stateface/webfont/stateface-regular-webfont.eot?#iefix') format('embedded-opentype'),
+                url('fonts/stateface/webfont/stateface-regular-webfont.woff') format('woff'),
+                url('fonts/stateface/webfont/stateface-regular-webfont.ttf') format('truetype'),
+                url('fonts/stateface/webfont/stateface-regular-webfont.svg#StateFaceRegular') format('svg');
+            font-weight: normal;
+            font-style: normal;
+        }
+        body, #app {
+            background-color:#f7f7f7;
+        }
+        body {
+            font-family: 'Klima Regular', 'Open Sans', Arial, sans-serif;
+            color: #444444;
+        }
+        h1 {
+            font-family: 'Klima Heavy', 'Open Sans', Arial, sans-serif;
+            font-size:80px;
+            margin: 0;
+            line-height: 80px;
+        }
+        h2{
+            font-size:15px;
+            margin: 0;
+            padding: 0;
+            line-height: 28px;
+        }
+        h3{
+            margin: 0;
+            padding: 0;
+            line-height: 10px;
+            font-weight: lighter;
+            font-style: italic;
+            font-size: 12px;
+            color: #ababab;
+        }
+        .header {
+            width:710px;
+            margin: 10px auto 30px;
+        }
+        .dsa-logo {
+            width:120px;float:left;
+        }
+
+        .candidate-table {
+            max-width:1000px;
+            margin:0px auto 30px;
+        }
+        .officeType {
+            font-size: 11px;
+            line-height: 23px;
+            height: 20px;
+            margin-left: 5px;
+        }
+
+        .officeType.Federal{
+            background:#444444;
+            color:#ffffff;
+        }
+        .officeType.State{
+            background: #6c8bfd;
+            color:#ffffff;
+        }
+
+        .stateface:before {
+            color:#e44a4a;
+        }
+        
+        .endorsement {
+            display:inline-block;
+            vertical-align: middle;
+            line-height:18px;
+        }
+        .link-icon {
+            display:inline-block;
+            vertical-align: middle;
+            line-height:18px;
+        }
+
+        .footer {
+            width:1000px;
+            background-color: #252525 !important;
+            margin:10px auto 30px;
+        }
+        
+        .footer:hover, .footer a:hover {
+            text-decoration: none !important;
+            color:#ffffff;
+        }
+        .footer .md-title, .footer .md-subhead {
+            color:#ffffff;
+        }
+        @media only screen and (max-width: 720px)  {
+        
+            .header { width: 100%; text-align:center;}
+            .dsa-logo { float:none; margin: 10px auto 0px; width:80px;}
+            h1 {font-size: 50px; line-height:50px;}
+            .footer { width:100%; }
+        }
+
+    </style>
+</html>
