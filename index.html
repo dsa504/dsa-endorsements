@@ -31,7 +31,9 @@
             </div>
             <md-table v-model="spreadsheetData" md-card class="candidate-table" v-cloak>
                 <md-table-row slot="md-table-row" slot-scope="{ item }" class="md-primary">
-                    <md-table-cell md-label="Candidate" md-sort-by="gsx$candidatename.$t">{{ item.gsx$candidatename.$t }}</md-table-cell>
+                    <md-table-cell md-label="Candidate" md-sort-by="gsx$candidatename.$t">{{ item.gsx$candidatename.$t }}
+                        <a :href="item.gsx$candidatelink.$t" rel="new" v-if="(item.gsx$candidatelink.$t !== '')" class="link-icon"><i class="material-icons">link</i></a>
+                    </md-table-cell>
                     <md-table-cell md-label="Office">{{ item.gsx$office.$t }} <md-chip :class="['officeType', item.gsx$electiontype.$t]">{{ item.gsx$electiontype.$t }}</md-chip></md-table-cell>
                     <md-table-cell md-label="State"><span :class="['stateface', 'stateface-'+ item.gsx$state.$t.toLowerCase() ]">{{ item.gsx$state.$t }}</span></md-table-cell>
                     <md-table-cell md-label="Endorsed By..."><div class="endorsement">{{ item.gsx$endorsingbody.$t }}</div>
